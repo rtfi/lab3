@@ -28,23 +28,23 @@ typedef enum stateTypeEnum{
 }stateType;
 
 volatile stateType currState=idle_forward;
-volatile stateType mode=backward;
+volatile stateType mode=idle_forward;
 volatile int ad0val;
 volatile double voltage=0;
 
 int main(void)
 {
+    int i=0;
     char v[10];
-    int percent1=0;
-    int percent2=0;
+    float percent1=0;
+    float percent2=0;
     
     initSW1();
     initLCD();
     initADC();
-    //initTimer2(); //enabling this breaks everything for some reason?
     initMotorOnePWM();
     initMotorTwoPWM();
-    T3CONbits.TON = 1;//PUT THIS AFTER PWM INITS
+    initTimerPWM();
 
     while(1)
     {
@@ -52,6 +52,12 @@ int main(void)
         moveCursorLCD(0,1);//move the cursor to center the text
         sprintf(v, "%.3f V", voltage); //make a new string out of the voltage float
         printStringLCD(v); //print the new string to the LCD
+
+        //setDirection(MOTOR_ONE, REVERSE);
+        //setDirection(MOTOR_TWO, REVERSE);
+        //setDutyCycle(MOTOR_ONE,100);
+        //setDutyCycle(MOTOR_TWO,50);
+        //testPWM();
         
         switch (currState)
         {
@@ -122,20 +128,17 @@ int main(void)
                 
                 if(ad0val>511)
                 {
-                    percent1=((1023-ad0val)/512)*100;
+                    percent1=(float)(1023-ad0val)/512*100;
                     percent2=100;
                 }
                 else if(ad0val<=511)
                 {
                     percent1=100;
-                    percent2=(ad0val/511)*100;
+                    percent2=(float)ad0val/511*100;
                 }
-
-                setDutyCycle(MOTOR_ONE, percent1);
-                setDutyCycle(MOTOR_TWO, percent2);
-
-        
-
+                setDutyCycle(MOTOR_ONE,percent1);
+                setDutyCycle(MOTOR_TWO,percent2);
+                
                 break;
 
             case backward:
@@ -144,13 +147,13 @@ int main(void)
 
                 if(ad0val>511)
                 {
-                    percent1=((1023-ad0val)/512)*100;
+                    percent1=(float)(1023-ad0val)/512*100;
                     percent2=100;
                 }
                 else if(ad0val<=511)
                 {
                     percent1=100;
-                    percent2=(ad0val/511)*100;
+                    percent2=(float)ad0val/511*100;
                 }
 
                 setDutyCycle(MOTOR_ONE, percent1);
@@ -198,11 +201,11 @@ void _ISR _CNInterrupt()
     }
 }
 
-//will be called after 10 samples
+//will be called after 16 samples
 void _ISR _ADC1Interrupt(void){
     IFS0bits.AD1IF = 0;
-
-    int i = 0;
+    ad0val = ADC1BUF0;
+    /*int i = 0;
     unsigned int *adcPtr;
     ad0val = 0;
     adcPtr = (unsigned int *) (&ADC1BUF0);
@@ -210,5 +213,5 @@ void _ISR _ADC1Interrupt(void){
     for(i = 0; i < 16; i++){
         ad0val = ad0val + *adcPtr/16;
         adcPtr++;
-    }
+    }*/
 }

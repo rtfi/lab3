@@ -47,6 +47,7 @@ void setDutyCycle(int motor, float percent){
         OC1RS = (unsigned int)((percent/100)*PRVAL);
         OC2RS = (unsigned int)((percent/100)*PRVAL);
     }
+    
 }
 
 void setDirection(int motor, int dir){
@@ -56,21 +57,21 @@ void setDirection(int motor, int dir){
             RPOR1bits.RP3R = 0; //map NOTHING to pin 7 (RP3)
             ODCBbits.ODB3 = 1; //turn on odc for pin 7
             ODCBbits.ODB2 = 0; //turn off odc for pin 6 (RP2)
-            RPOR1bits.RP2R = 19; //map OC2 to pin 6 (RP2)
+            RPOR1bits.RP2R = 18; //map OC2 to pin 6 (RP2)
         }
 
-        if (motor == MOTOR_TWO){
+        else if (motor == MOTOR_TWO){
             RPOR5bits.RP11R = 0; //map pin 22 to nothing
             ODCBbits.ODB11 = 1; //turn on odc for pin 22
             ODCBbits.ODB10 = 0; //turn off odc for  pin 21 (RB10)
             RPOR5bits.RP10R = 19; //map OC2 to pin 21 (RP10)
         }
 
-        if (motor == BOTH){
+        else if (motor == BOTH){
             RPOR1bits.RP3R = 0; //map NOTHING to pin 7 (RP3)
             ODCBbits.ODB3 = 1; //turn on odc for pin 7
             ODCBbits.ODB2 = 0; //turn off odc for pin 6 (RP2)
-            RPOR1bits.RP2R = 19; //map OC2 to pin 6 (RP2)
+            RPOR1bits.RP2R = 18; //map OC2 to pin 6 (RP2)
 
             RPOR5bits.RP11R = 0; //map pin 22 to nothing
             ODCBbits.ODB11 = 1; //turn on odc for pin 22
@@ -84,21 +85,21 @@ void setDirection(int motor, int dir){
             RPOR1bits.RP2R = 0; //map NOTHING to pin 6 (RP2)
             ODCBbits.ODB2 = 1; //turn on odc for pin 6
             ODCBbits.ODB3 = 0; //turn off odc for pin 7 (RP3)
-            RPOR1bits.RP3R = 19; //map OC2 to pin 7 (RP3)
+            RPOR1bits.RP3R = 18; //map OC2 to pin 7 (RP3)
         }
 
-        if (motor == MOTOR_TWO){
+        else if (motor == MOTOR_TWO){
             RPOR5bits.RP10R = 0; //map pin 22 to nothing
             ODCBbits.ODB10 = 1; //turn on odc for pin 21
             ODCBbits.ODB11 = 0; //turn off odc for pin 22
             RPOR5bits.RP11R = 19; //map OC2 to pin
         }
 
-        if (motor == BOTH){
+        else if (motor == BOTH){
             RPOR1bits.RP2R = 0; //map NOTHING to pin 6 (RP2)
             ODCBbits.ODB2 = 1; //turn on odc for pin 6
             ODCBbits.ODB3 = 0; //turn off odc for pin 7 (RP3)
-            RPOR1bits.RP3R = 19; //map OC2 to pin 7 (RP3)
+            RPOR1bits.RP3R = 18; //map OC2 to pin 7 (RP3)
 
             RPOR5bits.RP10R = 0; //map pin 22 to nothing
             ODCBbits.ODB10 = 1; //turn on odc for pin 21
@@ -111,16 +112,16 @@ void setDirection(int motor, int dir){
 
 void testPWM(){
     int i = 0;
-    setDirection(MOTOR_ONE, FORWARD);
+    setDirection(MOTOR_ONE, REVERSE);
     setDirection(MOTOR_TWO, FORWARD);
-    setDutyCycle(MOTOR_ONE, 50);
-    setDutyCycle(MOTOR_TWO, 50);
+    setDutyCycle(MOTOR_ONE, 0);
+    setDutyCycle(MOTOR_TWO, 100);
     for(i = 0; i<1000; i++) delayUs(2000);
     setDutyCycle(MOTOR_ONE, 75);
-    setDutyCycle(MOTOR_TWO, 75);
+    setDutyCycle(MOTOR_TWO, 0);
     for(i = 0; i<1000; i++) delayUs(2000);
     setDutyCycle(MOTOR_ONE, 100);
-    setDutyCycle(MOTOR_TWO, 100);
+    setDutyCycle(MOTOR_TWO, 0);
     for(i = 0; i<1000; i++) delayUs(2000);
 
     setDirection(MOTOR_ONE, REVERSE);
